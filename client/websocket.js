@@ -1,14 +1,14 @@
 'use strict';
 
 /**
- * WebSocket (Socket.io) client. Handles connection, drawing events,
- * cursor sync, and user list. No canvas logic.
- * Exposes connection status (connect/disconnect/reconnect) for UI and
- * network-issue handling.
+ * WebSocket (Socket.io) client.
+ * Handles connection, drawing events, cursor sync, and user list.
+ * Production-safe for Render (HTTPS + proxy).
  */
 
 (function (global) {
   var socket = null;
+
   var handlers = {
     draw: [],
     undo: [],
@@ -21,39 +21,57 @@
     connectionStatus: []
   };
 
-  function on(ev, fn) {
-    if (handlers[ev]) handlers[ev].push(fn);
+  function on(event, fn) {
+    if (handlers[event]) handlers[event].push(fn);
   }
 
   function emitStatus(connected, message) {
-    handlers.connectionStatus.forEach(function (f) { f(connected, message); });
+    handlers.connectionStatus.forEach(function (f) {
+      f(connected, message);
+    });
   }
 
   /**
-   * Create Socket.io connection and register internal event handlers.
-   * Call after registering `on('connectionStatus', ...)` and other `on` handlers.
-   * @returns {Socket|null}
-   * @throws {Error} if `io` is not loaded
+   * Initialize Socket.IO connection
    */
   function init() {
-    if (typeof io === 'undefined') throw new Error('Socket.io not loaded');
-    socket = io({ reconnection: true, reconnectionAttempts: 10, reconnectionDelay: 1000 });
+    if (typeof io === 'undefined') {
+      throw new Error('Socket.io client not loaded');
+    }
+
+    // ✅ Render + HTTPS safe configuration
+    socket = io({
+      path: '/socket.io',
+      transports: ['polling', 'websocket'], // allow upgrade
+      secure: true,
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      timeout: 20000
+    });
 
     socket.on('connect', function () {
       emitStatus(true, 'Connected');
     });
 
     socket.on('disconnect', function (reason) {
-      emitStatus(false, reason === 'io server disconnect' ? 'Disconnected' : 'Reconnecting...');
+      if (reason === 'io server disconnect') {
+        emitStatus(false, 'Disconnected');
+      } else {
+        emitStatus(false, 'Reconnecting…');
+      }
     });
 
-    socket.on('connect_error', function () {
+    socket.on('connect_error', function (err) {
       emitStatus(false, 'Connection error');
+      console.error('Socket connection error:', err);
     });
 
     socket.on('reconnect', function () {
       emitStatus(true, 'Reconnected');
     });
+
+    // ---- Server events ----
 
     socket.on('draw', function (stroke) {
       handlers.draw.forEach(function (f) { f(stroke); });
@@ -90,37 +108,59 @@
     return socket;
   }
 
-  /** Simple validation: stroke must have type, strokeId, and data. */
-  function isValidStroke(s) {
-    return s != null && typeof s === 'object' && typeof s.type === 'string' && typeof s.strokeId === 'string' && s.data != null && typeof s.data === 'object';
-  }
+  // ---- Emit helpers ----
 
   function emitDraw(stroke) {
-    if (socket && socket.connected) socket.emit('draw', stroke);
+    if (socket && socket.connected) {
+      socket.emit('draw', stroke);
+    }
   }
 
   function emitPreview(shape) {
-    if (socket && socket.connected && shape && shape.type && shape.data) socket.emit('preview', shape);
+    if (socket && socket.connected && shape && shape.type && shape.data) {
+      socket.emit('preview', shape);
+    }
   }
 
   function emitUndo(strokeId) {
-    if (socket && socket.connected) socket.emit('undo', { strokeId: strokeId });
+    if (socket && socket.connected) {
+      socket.emit('undo', { strokeId: strokeId });
+    }
   }
 
   function emitRedo() {
-    if (socket && socket.connected) socket.emit('redo', {});
+    if (socket && socket.connected) {
+      socket.emit('redo');
+    }
   }
 
   function emitClear() {
-    if (socket && socket.connected) socket.emit('clear');
+    if (socket && socket.connected) {
+      socket.emit('clear');
+    }
   }
 
   function emitCursor(x, y) {
     if (socket && socket.connected) {
-      if (x == null || y == null) socket.emit('cursor', { x: null, y: null });
-      else socket.emit('cursor', { x: x, y: y });
+      socket.emit('cursor', {
+        x: x != null ? x : null,
+        y: y != null ? y : null
+      });
     }
   }
+
+  function isValidStroke(s) {
+    return (
+      s &&
+      typeof s === 'object' &&
+      typeof s.type === 'string' &&
+      typeof s.strokeId === 'string' &&
+      s.data &&
+      typeof s.data === 'object'
+    );
+  }
+
+  // ---- Public API ----
 
   global.WebSocketModule = {
     init: init,
@@ -132,6 +172,9 @@
     emitClear: emitClear,
     emitCursor: emitCursor,
     isValidStroke: isValidStroke,
-    isConnected: function () { return socket && socket.connected; }
+    isConnected: function () {
+      return socket && socket.connected;
+    }
   };
+
 })(typeof window !== 'undefined' ? window : this);

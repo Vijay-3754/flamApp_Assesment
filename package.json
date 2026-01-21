@@ -3,14 +3,21 @@
   "version": "1.0.0",
   "description": "Real-time collaborative drawing canvas with multi-user sync, undo/redo, and user indicators",
   "main": "dist/server.js",
-  "keywords": ["socket.io", "canvas", "collaborative", "drawing", "real-time"],
+  "keywords": [
+    "socket.io",
+    "canvas",
+    "collaborative",
+    "drawing",
+    "real-time"
+  ],
   "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.6.0"
+    "express": "^4.22.1",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.25",
+    "@types/node": "^20.19.30",
+    "@types/socket.io": "^3.0.1",
     "typescript": "^5.3.0"
   },
   "scripts": {
