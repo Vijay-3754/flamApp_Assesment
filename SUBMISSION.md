@@ -19,7 +19,8 @@
 - [ ] ARCHITECTURE.md with technical documentation
 - [ ] DEPLOYMENT.md with deployment guide
 - [ ] LICENSE.md
-- [ ] Procfile (for Heroku)
+- [ ] render.yaml (for Render)
+- [ ] Procfile (for Heroku, optional)
 - [ ] .gitignore
 
 **Repository Setup:**
@@ -37,23 +38,22 @@ git push -u origin main
 
 ### 2. Deployed Demo Link
 
-**Recommended Platforms:**
-- **Heroku**: Best for WebSocket support, easy deployment
-- **Railway**: Modern platform, good free tier
-- **Render**: Simple deployment, free tier available
+**Recommended Platform:**
+- **Render**: Simple deployment, free tier available, excellent WebSocket support
 
 **Deployment Steps:**
-1. Follow instructions in DEPLOYMENT.md
-2. Ensure WebSocket support is enabled
-3. Test the deployed app with multiple browsers
-4. Copy the deployment URL
+1. Go to https://render.com and sign up with GitHub
+2. Create New Web Service → Connect GitHub repo
+3. Select your repository: `Vijay-3754/flamApp_Assesment`
+4. Configure:
+   - Build Command: `npm run build`
+   - Start Command: `node dist/server.js`
+5. Deploy automatically
+6. Test the deployed app with multiple browsers
+7. Copy the deployment URL
 
 **Demo Link Format:**
 ```
-https://your-app-name.herokuapp.com
-or
-https://your-app-name.railway.app
-or
 https://your-app-name.onrender.com
 ```
 
@@ -68,8 +68,8 @@ Hello,
 
 I am submitting my Collaborative Canvas project for review.
 
-Repository Link: https://github.com/yourusername/collaborative-canvas
-Demo Link: https://your-app-name.herokuapp.com
+Repository Link: https://github.com/Vijay-3754/flamApp_Assesment
+Demo Link: https://your-app-name.onrender.com
 
 Features Implemented:
 ✅ Canvas Mastery: Path optimization, batching, efficient redrawing
@@ -91,11 +91,11 @@ Best regards,
 ```markdown
 ## Live Demo
 
-🌐 [View Live Demo](https://your-app-name.herokuapp.com)
+🌐 [View Live Demo](https://your-app-name.onrender.com)
 
 ## Repository
 
-📦 [GitHub Repository](https://github.com/yourusername/collaborative-canvas)
+📦 [GitHub Repository](https://github.com/Vijay-3754/flamApp_Assesment)
 ```
 
 ## 📝 Submission Checklist
@@ -116,9 +116,8 @@ Before submitting, verify:
 
 | Platform | WebSocket Support | Free Tier | Ease of Use | Best For |
 |----------|-------------------|-----------|-------------|----------|
+| Render | ✅ Excellent | Available | ⭐⭐⭐⭐⭐ | Simple setup, recommended |
 | Heroku | ✅ Excellent | Limited | ⭐⭐⭐⭐⭐ | Quick deployment |
-| Railway | ✅ Excellent | Generous | ⭐⭐⭐⭐⭐ | Modern projects |
-| Render | ✅ Good | Available | ⭐⭐⭐⭐ | Simple setup |
 | Vercel | ⚠️ Requires config | Generous | ⭐⭐⭐ | Serverless apps |
 
-**Recommendation**: Use **Railway** or **Render** for best free tier experience, or **Heroku** for reliability.
+**Recommendation**: Use **Render** for best free tier experience and easy deployment.

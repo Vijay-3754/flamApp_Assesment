@@ -123,19 +123,17 @@ collaborative-canvas/
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-### Quick Deploy to Heroku
+### Quick Deploy to Render (Recommended)
 
-```bash
-heroku create your-app-name
-git push heroku main
-heroku open
-```
-
-### Quick Deploy to Railway
-
-1. Go to https://railway.app
-2. Connect GitHub repository
-3. Deploy automatically
+1. Go to https://render.com and sign up with GitHub
+2. Click "New +" → "Web Service"
+3. Connect your GitHub repository: `Vijay-3754/flamApp_Assesment`
+4. Configure:
+   - **Build Command**: `npm run build`
+   - **Start Command**: `node dist/server.js`
+5. Click "Create Web Service"
+6. Wait 3-5 minutes for deployment
+7. Get your URL: `https://your-app-name.onrender.com`
 
 ### Demo Links
 

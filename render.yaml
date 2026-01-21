@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: collaborative-canvas
+    env: node
+    buildCommand: npm run build
+    startCommand: node dist/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
